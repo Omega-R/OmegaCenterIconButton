@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="omega_default_drawable_padding">4dp</dimen>
+
+</resources>
