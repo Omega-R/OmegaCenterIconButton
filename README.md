@@ -33,7 +33,7 @@ Example of usage in xml layout
     <com.omega_r.libs.OmegaCenterIconButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/ic_android_black_24dp"
+        android:drawableStart="@drawable/ic_android_black_24dp"
         android:text="Great"
         android:textSize="14sp"
         android:theme="@style/BlueButtonStyle"/>
