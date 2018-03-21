@@ -1,4 +1,4 @@
-package com.omega_r.libs.centericonbutton;
+package com.omega_r.libs;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -13,6 +13,8 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.AppCompatButton;
 import android.text.method.TransformationMethod;
 import android.util.AttributeSet;
+
+import com.omega_r.libs.centericonbutton.R;
 
 import java.util.ArrayList;
 import java.util.List;
