@@ -6,7 +6,7 @@
     android:orientation="vertical"
     tools:context="com.omega.MainActivity">
 
-    <com.omega_r.libs.centericonbutton.OmegaCenterIconButton
+    <com.omega_r.libs.OmegaCenterIconButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -15,7 +15,7 @@
         android:textSize="14sp"
         android:theme="@style/BlueButtonStyle" />
 
-    <com.omega_r.libs.centericonbutton.OmegaCenterIconButton
+    <com.omega_r.libs.OmegaCenterIconButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -25,7 +25,7 @@
         android:theme="@style/AccentButtonStyle" />
 
 
-    <com.omega_r.libs.centericonbutton.OmegaCenterIconButton
+    <com.omega_r.libs.OmegaCenterIconButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -40,7 +40,7 @@
         android:layout_marginTop="20dp"
         android:orientation="horizontal">
 
-        <com.omega_r.libs.centericonbutton.OmegaCenterIconButton
+        <com.omega_r.libs.OmegaCenterIconButton
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -48,7 +48,7 @@
             android:text="left"
             android:textSize="14sp" />
 
-        <com.omega_r.libs.centericonbutton.OmegaCenterIconButton
+        <com.omega_r.libs.OmegaCenterIconButton
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -58,7 +58,7 @@
 
     </LinearLayout>
 
-    <com.omega_r.libs.centericonbutton.OmegaCenterIconButton
+    <com.omega_r.libs.OmegaCenterIconButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
