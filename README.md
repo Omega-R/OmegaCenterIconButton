@@ -34,9 +34,7 @@ Example of usage in xml layout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:drawableStart="@drawable/ic_android_black_24dp"
-        android:text="Great"
-        android:textSize="14sp"
-        android:theme="@style/BlueButtonStyle"/>
+        android:text="Great"/>
 ```
 
 # License
