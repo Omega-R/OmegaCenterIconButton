@@ -32,23 +32,25 @@ public class OmegaCenterIconButton extends AppCompatButton {
     private Rect textBoundsRect;
     @ColorInt
     private int tintColor = Color.TRANSPARENT;
+    private int mLeftPadding;
+    private int mRightPadding;
 
     public OmegaCenterIconButton(Context context) {
         super(context);
-        initDrawableTint(context, null);
+        init(context, null);
     }
 
     public OmegaCenterIconButton(Context context, AttributeSet attrs) {
         super(context, attrs);
-        initDrawableTint(context, attrs);
+        init(context, attrs);
     }
 
     public OmegaCenterIconButton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        initDrawableTint(context, attrs);
+        init(context, attrs);
     }
 
-    private void initDrawableTint(Context context, AttributeSet attrs) {
+    private void init(Context context, AttributeSet attrs) {
         if (attrs != null) {
             TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.OmegaCenterIconButton);
             tintColor = typedArray.getColor(R.styleable.OmegaCenterIconButton_drawableTint, Color.TRANSPARENT);
@@ -59,6 +61,8 @@ public class OmegaCenterIconButton extends AppCompatButton {
             updateTint();
             typedArray.recycle();
         }
+        mLeftPadding = getPaddingLeft();
+        mRightPadding = getPaddingRight();
     }
 
     private void updateTint() {
@@ -107,6 +111,14 @@ public class OmegaCenterIconButton extends AppCompatButton {
         updatePadding(getMeasuredWidth());
     }
 
+    @Override
+    public void setPadding(int left, int top, int right, int bottom) {
+        super.setPadding(left, top, right, bottom);
+        mLeftPadding = left;
+        mRightPadding = right;
+        updatePadding();
+    }
+
     private void updatePadding(int width) {
         if (width == 0) return;
 
@@ -129,7 +141,8 @@ public class OmegaCenterIconButton extends AppCompatButton {
             paddingSize = (width - rightDrawable.getIntrinsicWidth() - iconPadding * 2 - textWidth) / 2;
         }
 
-        setPadding(paddingSize, getPaddingTop(), paddingSize, getPaddingBottom());
+
+        super.setPadding(Math.max(mLeftPadding, paddingSize), getPaddingTop(), Math.max(paddingSize, mRightPadding), getPaddingBottom());
     }
 
     private int getTextWidth() {
