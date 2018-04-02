@@ -23,7 +23,7 @@ allprojects {
 **Step 2.** Add the dependency
 ```
 dependencies {
-    compile 'com.github.Omega-R:OmegaCenterIconButton:0.0.1@aar'
+    implementation 'com.github.Omega-R:OmegaCenterIconButton:0.0.2@aar'
 }
 ```
 
