@@ -68,18 +68,21 @@ public class OmegaCenterIconButton extends AppCompatButton {
     private void updateTint() {
         if (tintColor != Color.TRANSPARENT) {
             Drawable[] drawables = getCompoundDrawables();
-            for (Drawable drawable : drawables) {
+            if (drawables.length != DRAWABLES_LENGTH) return;
+
+            Drawable[] wrappedDrawables = new Drawable[DRAWABLES_LENGTH];
+            for (int i = 0; i < DRAWABLES_LENGTH; i++) {
+                Drawable drawable = drawables[i];
                 if (drawable != null) {
                     Drawable wrappedDrawable = DrawableCompat.wrap(drawable).mutate();
                     DrawableCompat.setTint(wrappedDrawable, tintColor);
+                    wrappedDrawables[i] = wrappedDrawable;
                 }
             }
-            if (drawables.length == DRAWABLES_LENGTH) {
-                setCompoundDrawablesWithIntrinsicBounds(drawables[DRAWABLE_LEFT_POSITION],
-                                                        drawables[DRAWABLE_TOP_POSITION],
-                                                        drawables[DRAWABLE_RIGHT_POSITION],
-                                                        drawables[DRAWABLE_BOTTOM_POSITION]);
-            }
+            setCompoundDrawablesWithIntrinsicBounds(wrappedDrawables[DRAWABLE_LEFT_POSITION],
+                                                    wrappedDrawables[DRAWABLE_TOP_POSITION],
+                                                    wrappedDrawables[DRAWABLE_RIGHT_POSITION],
+                                                    wrappedDrawables[DRAWABLE_BOTTOM_POSITION]);
         }
     }
 
