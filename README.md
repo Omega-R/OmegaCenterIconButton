@@ -23,7 +23,7 @@ allprojects {
 **Step 2.** Add the dependency
 ```
 dependencies {
-    compile 'com.github.Omega-R:OmegaCenterIconButton:0.0.1@aar'
+    implementation 'com.github.Omega-R:OmegaCenterIconButton:0.0.3@aar'
 }
 ```
 
@@ -33,10 +33,8 @@ Example of usage in xml layout
     <com.omega_r.libs.OmegaCenterIconButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/ic_android_black_24dp"
-        android:text="Great"
-        android:textSize="14sp"
-        android:theme="@style/BlueButtonStyle"/>
+        android:drawableStart="@drawable/ic_android_black_24dp"
+        android:text="Great"/>
 ```
 
 # License

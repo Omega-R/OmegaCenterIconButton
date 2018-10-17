@@ -6,11 +6,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.ColorInt;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.Nullable;
-import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v7.widget.AppCompatButton;
 import android.text.method.TransformationMethod;
 import android.util.AttributeSet;
 
@@ -19,6 +14,12 @@ import com.omega_r.libs.centericonbutton.R;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.graphics.drawable.DrawableCompat;
 
 public class OmegaCenterIconButton extends AppCompatButton {
 
@@ -181,11 +182,10 @@ public class OmegaCenterIconButton extends AppCompatButton {
         return isAllCaps() ? longPart.toUpperCase() : longPart;
     }
 
-    private boolean isAllCaps() {
+    public boolean isAllCaps() {
         TransformationMethod method = getTransformationMethod();
         if(method == null) return false;
 
         return method.getClass().getSimpleName().equals("AllCapsTransformationMethod");
     }
-
 }
