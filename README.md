@@ -24,6 +24,9 @@ allprojects {
 ```
 dependencies {
     implementation 'com.github.Omega-R:OmegaCenterIconButton:0.0.3@aar'
+    
+    // The same version as 0.0.3 for androidX
+    implementation 'com.github.Omega-R:OmegaCenterIconButton:0.0.4@aar'
 }
 ```
 
