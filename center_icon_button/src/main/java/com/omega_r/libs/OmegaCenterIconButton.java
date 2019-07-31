@@ -2,12 +2,22 @@ package com.omega_r.libs;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ScaleDrawable;
 import android.text.method.TransformationMethod;
 import android.util.AttributeSet;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.omega_r.libs.centericonbutton.R;
 
@@ -15,11 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import androidx.annotation.ColorInt;
-import androidx.annotation.DrawableRes;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatButton;
-import androidx.core.graphics.drawable.DrawableCompat;
+import static android.view.Gravity.NO_GRAVITY;
 
 public class OmegaCenterIconButton extends AppCompatButton {
 
@@ -32,9 +38,10 @@ public class OmegaCenterIconButton extends AppCompatButton {
 
     private Rect textBoundsRect;
     @ColorInt
-    private int tintColor = Color.TRANSPARENT;
+    private int mTintColor = Color.TRANSPARENT;
     private int mLeftPadding;
     private int mRightPadding;
+    private int mDrawableSize;
 
     public OmegaCenterIconButton(Context context) {
         super(context);
@@ -54,20 +61,22 @@ public class OmegaCenterIconButton extends AppCompatButton {
     private void init(Context context, AttributeSet attrs) {
         if (attrs != null) {
             TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.OmegaCenterIconButton);
-            tintColor = typedArray.getColor(R.styleable.OmegaCenterIconButton_drawableTint, Color.TRANSPARENT);
+            mTintColor = typedArray.getColor(R.styleable.OmegaCenterIconButton_drawableTint, Color.TRANSPARENT);
+            mDrawableSize = typedArray.getDimensionPixelSize(R.styleable.OmegaCenterIconButton_drawableSize, -1);
+
             float defaultDrawablePadding = getResources().getDimension(R.dimen.omega_default_drawable_padding);
             int drawablePadding = (int) typedArray.getDimension(R.styleable.OmegaCenterIconButton_android_drawablePadding, defaultDrawablePadding);
             setCompoundDrawablePadding(drawablePadding);
 
-            updateTint();
+            updateDrawables();
             typedArray.recycle();
         }
         mLeftPadding = getPaddingLeft();
         mRightPadding = getPaddingRight();
     }
 
-    private void updateTint() {
-        if (tintColor != Color.TRANSPARENT) {
+    private void updateDrawables() {
+        if (mTintColor != Color.TRANSPARENT || mDrawableSize != -1) {
             Drawable[] drawables = getCompoundDrawables();
             if (drawables.length != DRAWABLES_LENGTH) return;
 
@@ -75,8 +84,13 @@ public class OmegaCenterIconButton extends AppCompatButton {
             for (int i = 0; i < DRAWABLES_LENGTH; i++) {
                 Drawable drawable = drawables[i];
                 if (drawable != null) {
-                    Drawable wrappedDrawable = DrawableCompat.wrap(drawable).mutate();
-                    DrawableCompat.setTint(wrappedDrawable, tintColor);
+                    Drawable wrappedDrawable = drawable;
+                    if (mTintColor != Color.TRANSPARENT) {
+                        wrappedDrawable = getTintedDrawable(wrappedDrawable);
+                    }
+                    if (mDrawableSize != -1) {
+                        wrappedDrawable = getScaleDrawable(wrappedDrawable);
+                    }
                     wrappedDrawables[i] = wrappedDrawable;
                 }
             }
@@ -85,6 +99,32 @@ public class OmegaCenterIconButton extends AppCompatButton {
                                                     wrappedDrawables[DRAWABLE_RIGHT_POSITION],
                                                     wrappedDrawables[DRAWABLE_BOTTOM_POSITION]);
         }
+    }
+
+    @NonNull
+    private Drawable getTintedDrawable(@NonNull Drawable drawable) {
+        Drawable mutate = DrawableCompat.wrap(drawable).mutate();
+        DrawableCompat.setTint(mutate, mTintColor);
+        return mutate;
+    }
+
+    @NonNull
+    private Drawable getScaleDrawable(@NonNull Drawable drawable) {
+        if (drawable instanceof BitmapDrawable) {
+            Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+            if (bitmap != null) {
+                Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, mDrawableSize, mDrawableSize, true);
+                if (scaledBitmap != null) return new BitmapDrawable(getResources(), scaledBitmap);
+            }
+        }
+
+        Drawable scaleDrawable = new ScaleDrawable(drawable, NO_GRAVITY, mDrawableSize, mDrawableSize).getDrawable();
+        if (scaleDrawable != null) {
+            scaleDrawable.setBounds(0, 0, mDrawableSize, mDrawableSize);
+            return scaleDrawable;
+        }
+
+        return drawable;
     }
 
     @Override

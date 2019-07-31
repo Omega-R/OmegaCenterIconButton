@@ -3,12 +3,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion rootProject.compileSdkVersion
+    compileSdkVersion rootProject.compile_Sdk_Version
 
     defaultConfig {
         applicationId "com.omega"
-        minSdkVersion rootProject.minSdkVersion
-        targetSdkVersion rootProject.targetSdkVersion
+        minSdkVersion rootProject.min_Sdk_Version
+        targetSdkVersion rootProject.target_Sdk_Version
         versionCode 1
         versionName "1.0"
     }
