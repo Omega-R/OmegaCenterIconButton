@@ -2,13 +2,10 @@ package com.omega_r.libs;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ScaleDrawable;
 import android.text.method.TransformationMethod;
 import android.util.AttributeSet;
 
@@ -24,8 +21,6 @@ import com.omega_r.libs.centericonbutton.R;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
-
-import static android.view.Gravity.NO_GRAVITY;
 
 public class OmegaCenterIconButton extends AppCompatButton {
 
@@ -89,15 +84,15 @@ public class OmegaCenterIconButton extends AppCompatButton {
                         wrappedDrawable = getTintedDrawable(wrappedDrawable);
                     }
                     if (mDrawableSize != -1) {
-                        wrappedDrawable = getScaleDrawable(wrappedDrawable);
+                        wrappedDrawable = updateDrawableBounds(wrappedDrawable);
                     }
                     wrappedDrawables[i] = wrappedDrawable;
                 }
             }
-            setCompoundDrawablesWithIntrinsicBounds(wrappedDrawables[DRAWABLE_LEFT_POSITION],
-                                                    wrappedDrawables[DRAWABLE_TOP_POSITION],
-                                                    wrappedDrawables[DRAWABLE_RIGHT_POSITION],
-                                                    wrappedDrawables[DRAWABLE_BOTTOM_POSITION]);
+            setCompoundDrawables(wrappedDrawables[DRAWABLE_LEFT_POSITION],
+                                 wrappedDrawables[DRAWABLE_TOP_POSITION],
+                                 wrappedDrawables[DRAWABLE_RIGHT_POSITION],
+                                 wrappedDrawables[DRAWABLE_BOTTOM_POSITION]);
         }
     }
 
@@ -109,27 +104,14 @@ public class OmegaCenterIconButton extends AppCompatButton {
     }
 
     @NonNull
-    private Drawable getScaleDrawable(@NonNull Drawable drawable) {
-        if (drawable instanceof BitmapDrawable) {
-            Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-            if (bitmap != null) {
-                Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, mDrawableSize, mDrawableSize, true);
-                if (scaledBitmap != null) return new BitmapDrawable(getResources(), scaledBitmap);
-            }
-        }
-
-        Drawable scaleDrawable = new ScaleDrawable(drawable, NO_GRAVITY, mDrawableSize, mDrawableSize).getDrawable();
-        if (scaleDrawable != null) {
-            scaleDrawable.setBounds(0, 0, mDrawableSize, mDrawableSize);
-            return scaleDrawable;
-        }
-
+    private Drawable updateDrawableBounds(@NonNull Drawable drawable) {
+        drawable.getBounds().set(0, 0, mDrawableSize, mDrawableSize);
         return drawable;
     }
 
     @Override
-    public void setCompoundDrawablesWithIntrinsicBounds(@DrawableRes int left, @DrawableRes int top, @DrawableRes int right, @DrawableRes int bottom) {
-        super.setCompoundDrawablesWithIntrinsicBounds(left, top, right, bottom);
+    public void setCompoundDrawables(@Nullable Drawable left, @Nullable Drawable top, @Nullable Drawable right, @Nullable Drawable bottom) {
+        super.setCompoundDrawables(left, top, right, bottom);
         updatePadding();
     }
 
@@ -167,7 +149,7 @@ public class OmegaCenterIconButton extends AppCompatButton {
         if (width == 0) return;
 
         Drawable[] compoundDrawables = getCompoundDrawables();
-        if (compoundDrawables.length == 0 || compoundDrawables.length != DRAWABLES_LENGTH) return;
+        if (compoundDrawables.length != DRAWABLES_LENGTH) return;
 
         Drawable leftDrawable = compoundDrawables[DRAWABLE_LEFT_POSITION];
         Drawable rightDrawable = compoundDrawables[DRAWABLE_RIGHT_POSITION];
@@ -177,14 +159,16 @@ public class OmegaCenterIconButton extends AppCompatButton {
         int iconPadding = Math.max(getCompoundDrawablePadding(), 1);
         int paddingSize;
 
-        if (leftDrawable != null && rightDrawable != null) {
-            paddingSize = (width - leftDrawable.getIntrinsicWidth() - rightDrawable.getIntrinsicWidth() - textWidth - iconPadding * 4) / 2;
-        } else if (leftDrawable != null) {
-            paddingSize = (width - leftDrawable.getIntrinsicWidth() - iconPadding * 2 - textWidth) / 2;
-        } else {
-            paddingSize = (width - rightDrawable.getIntrinsicWidth() - iconPadding * 2 - textWidth) / 2;
-        }
+        int leftWidth = leftDrawable == null ? 0 : leftDrawable.getBounds().width();
+        int rightWidth = rightDrawable == null ? 0 : rightDrawable.getBounds().width();
 
+        if (leftDrawable != null && rightDrawable != null) {
+            paddingSize = (width - leftWidth - rightWidth - textWidth - iconPadding * 4) / 2;
+        } else if (leftDrawable != null) {
+            paddingSize = (width - leftWidth - iconPadding * 2 - textWidth) / 2;
+        } else {
+            paddingSize = (width - rightWidth - iconPadding * 2 - textWidth) / 2;
+        }
 
         super.setPadding(Math.max(mLeftPadding, paddingSize), getPaddingTop(), Math.max(paddingSize, mRightPadding), getPaddingBottom());
     }
@@ -213,7 +197,7 @@ public class OmegaCenterIconButton extends AppCompatButton {
             return isAllCaps() ? list.get(0).toUpperCase() : list.get(0);
         }
         String longPart = list.get(0);
-        for(int i = 0; i < list.size() - 1; i++) {
+        for (int i = 0; i < list.size() - 1; i++) {
             if (list.get(i + 1).length() > list.get(i).length()) {
                 longPart = list.get(i + 1);
             }
@@ -224,7 +208,7 @@ public class OmegaCenterIconButton extends AppCompatButton {
 
     public boolean isAllCaps() {
         TransformationMethod method = getTransformationMethod();
-        if(method == null) return false;
+        if (method == null) return false;
 
         return method.getClass().getSimpleName().equals("AllCapsTransformationMethod");
     }

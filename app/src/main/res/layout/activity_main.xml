@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context="com.omega.MainActivity">
 
@@ -22,8 +23,8 @@
         android:drawableRight="@drawable/ic_android_black_24dp"
         android:text="Great"
         android:textSize="14sp"
+        app:drawableSize="40sp"
         android:theme="@style/AccentButtonStyle" />
-
 
     <com.omega_r.libs.OmegaCenterIconButton
         android:layout_width="match_parent"
