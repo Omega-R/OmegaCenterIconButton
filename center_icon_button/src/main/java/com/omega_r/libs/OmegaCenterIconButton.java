@@ -9,17 +9,17 @@ import android.graphics.drawable.Drawable;
 import android.text.method.TransformationMethod;
 import android.util.AttributeSet;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.graphics.drawable.DrawableCompat;
+
 import com.omega_r.libs.centericonbutton.R;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
-
-import androidx.annotation.ColorInt;
-import androidx.annotation.DrawableRes;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatButton;
-import androidx.core.graphics.drawable.DrawableCompat;
 
 public class OmegaCenterIconButton extends AppCompatButton {
 
@@ -32,9 +32,10 @@ public class OmegaCenterIconButton extends AppCompatButton {
 
     private Rect textBoundsRect;
     @ColorInt
-    private int tintColor = Color.TRANSPARENT;
+    private int mTintColor = Color.TRANSPARENT;
     private int mLeftPadding;
     private int mRightPadding;
+    private int mDrawableSize;
 
     public OmegaCenterIconButton(Context context) {
         super(context);
@@ -54,20 +55,22 @@ public class OmegaCenterIconButton extends AppCompatButton {
     private void init(Context context, AttributeSet attrs) {
         if (attrs != null) {
             TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.OmegaCenterIconButton);
-            tintColor = typedArray.getColor(R.styleable.OmegaCenterIconButton_drawableTint, Color.TRANSPARENT);
+            mTintColor = typedArray.getColor(R.styleable.OmegaCenterIconButton_drawableTint, Color.TRANSPARENT);
+            mDrawableSize = typedArray.getDimensionPixelSize(R.styleable.OmegaCenterIconButton_drawableSize, -1);
+
             float defaultDrawablePadding = getResources().getDimension(R.dimen.omega_default_drawable_padding);
             int drawablePadding = (int) typedArray.getDimension(R.styleable.OmegaCenterIconButton_android_drawablePadding, defaultDrawablePadding);
             setCompoundDrawablePadding(drawablePadding);
 
-            updateTint();
+            updateDrawables();
             typedArray.recycle();
         }
         mLeftPadding = getPaddingLeft();
         mRightPadding = getPaddingRight();
     }
 
-    private void updateTint() {
-        if (tintColor != Color.TRANSPARENT) {
+    private void updateDrawables() {
+        if (mTintColor != Color.TRANSPARENT || mDrawableSize != -1) {
             Drawable[] drawables = getCompoundDrawables();
             if (drawables.length != DRAWABLES_LENGTH) return;
 
@@ -75,21 +78,46 @@ public class OmegaCenterIconButton extends AppCompatButton {
             for (int i = 0; i < DRAWABLES_LENGTH; i++) {
                 Drawable drawable = drawables[i];
                 if (drawable != null) {
-                    Drawable wrappedDrawable = DrawableCompat.wrap(drawable).mutate();
-                    DrawableCompat.setTint(wrappedDrawable, tintColor);
+                    Drawable wrappedDrawable = drawable;
+                    if (mTintColor != Color.TRANSPARENT) {
+                        wrappedDrawable = getTintedDrawable(wrappedDrawable);
+                    }
+                    if (mDrawableSize > 0) {
+                        wrappedDrawable = updateDrawableBounds(wrappedDrawable);
+                    }
                     wrappedDrawables[i] = wrappedDrawable;
                 }
             }
-            setCompoundDrawablesWithIntrinsicBounds(wrappedDrawables[DRAWABLE_LEFT_POSITION],
-                                                    wrappedDrawables[DRAWABLE_TOP_POSITION],
-                                                    wrappedDrawables[DRAWABLE_RIGHT_POSITION],
-                                                    wrappedDrawables[DRAWABLE_BOTTOM_POSITION]);
+            if (mDrawableSize > 0) {
+                setCompoundDrawables(wrappedDrawables[DRAWABLE_LEFT_POSITION],
+                                     wrappedDrawables[DRAWABLE_TOP_POSITION],
+                                     wrappedDrawables[DRAWABLE_RIGHT_POSITION],
+                                     wrappedDrawables[DRAWABLE_BOTTOM_POSITION]);
+            } else {
+                setCompoundDrawablesWithIntrinsicBounds(wrappedDrawables[DRAWABLE_LEFT_POSITION],
+                                                        wrappedDrawables[DRAWABLE_TOP_POSITION],
+                                                        wrappedDrawables[DRAWABLE_RIGHT_POSITION],
+                                                        wrappedDrawables[DRAWABLE_BOTTOM_POSITION]);
+            }
         }
     }
 
+    @NonNull
+    private Drawable getTintedDrawable(@NonNull Drawable drawable) {
+        Drawable mutate = DrawableCompat.wrap(drawable).mutate();
+        DrawableCompat.setTint(mutate, mTintColor);
+        return mutate;
+    }
+
+    @NonNull
+    private Drawable updateDrawableBounds(@NonNull Drawable drawable) {
+        drawable.getBounds().set(0, 0, mDrawableSize, mDrawableSize);
+        return drawable;
+    }
+
     @Override
-    public void setCompoundDrawablesWithIntrinsicBounds(@DrawableRes int left, @DrawableRes int top, @DrawableRes int right, @DrawableRes int bottom) {
-        super.setCompoundDrawablesWithIntrinsicBounds(left, top, right, bottom);
+    public void setCompoundDrawables(@Nullable Drawable left, @Nullable Drawable top, @Nullable Drawable right, @Nullable Drawable bottom) {
+        super.setCompoundDrawables(left, top, right, bottom);
         updatePadding();
     }
 
@@ -127,7 +155,7 @@ public class OmegaCenterIconButton extends AppCompatButton {
         if (width == 0) return;
 
         Drawable[] compoundDrawables = getCompoundDrawables();
-        if (compoundDrawables.length == 0 || compoundDrawables.length != DRAWABLES_LENGTH) return;
+        if (compoundDrawables.length != DRAWABLES_LENGTH) return;
 
         Drawable leftDrawable = compoundDrawables[DRAWABLE_LEFT_POSITION];
         Drawable rightDrawable = compoundDrawables[DRAWABLE_RIGHT_POSITION];
@@ -137,14 +165,16 @@ public class OmegaCenterIconButton extends AppCompatButton {
         int iconPadding = Math.max(getCompoundDrawablePadding(), 1);
         int paddingSize;
 
-        if (leftDrawable != null && rightDrawable != null) {
-            paddingSize = (width - leftDrawable.getIntrinsicWidth() - rightDrawable.getIntrinsicWidth() - textWidth - iconPadding * 4) / 2;
-        } else if (leftDrawable != null) {
-            paddingSize = (width - leftDrawable.getIntrinsicWidth() - iconPadding * 2 - textWidth) / 2;
-        } else {
-            paddingSize = (width - rightDrawable.getIntrinsicWidth() - iconPadding * 2 - textWidth) / 2;
-        }
+        int leftWidth = leftDrawable == null ? 0 : leftDrawable.getBounds().width();
+        int rightWidth = rightDrawable == null ? 0 : rightDrawable.getBounds().width();
 
+        if (leftDrawable != null && rightDrawable != null) {
+            paddingSize = (width - leftWidth - rightWidth - textWidth - iconPadding * 4) / 2;
+        } else if (leftDrawable != null) {
+            paddingSize = (width - leftWidth - iconPadding * 2 - textWidth) / 2;
+        } else {
+            paddingSize = (width - rightWidth - iconPadding * 2 - textWidth) / 2;
+        }
 
         super.setPadding(Math.max(mLeftPadding, paddingSize), getPaddingTop(), Math.max(paddingSize, mRightPadding), getPaddingBottom());
     }
@@ -173,7 +203,7 @@ public class OmegaCenterIconButton extends AppCompatButton {
             return isAllCaps() ? list.get(0).toUpperCase() : list.get(0);
         }
         String longPart = list.get(0);
-        for(int i = 0; i < list.size() - 1; i++) {
+        for (int i = 0; i < list.size() - 1; i++) {
             if (list.get(i + 1).length() > list.get(i).length()) {
                 longPart = list.get(i + 1);
             }
@@ -184,7 +214,7 @@ public class OmegaCenterIconButton extends AppCompatButton {
 
     public boolean isAllCaps() {
         TransformationMethod method = getTransformationMethod();
-        if(method == null) return false;
+        if (method == null) return false;
 
         return method.getClass().getSimpleName().equals("AllCapsTransformationMethod");
     }

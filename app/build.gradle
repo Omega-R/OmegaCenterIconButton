@@ -3,12 +3,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion rootProject.compileSdkVersion
+    compileSdkVersion rootProject.compile_sdk_version
 
     defaultConfig {
         applicationId "com.omega"
-        minSdkVersion rootProject.minSdkVersion
-        targetSdkVersion rootProject.targetSdkVersion
+        minSdkVersion rootProject.min_sdk_version
+        targetSdkVersion rootProject.target_sdk_version
         versionCode 1
         versionName "1.0"
     }
@@ -23,8 +23,8 @@ android {
 
 dependencies {
     api fileTree(dir: 'libs', include: ['*.jar'])
-    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
-    api "androidx.appcompat:appcompat:$appCompatLibraryVersion"
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    api "androidx.appcompat:appcompat:$app_compat_version"
 
     api project(":center_icon_button")
 }
