@@ -10,7 +10,6 @@ import android.text.method.TransformationMethod;
 import android.util.AttributeSet;
 
 import androidx.annotation.ColorInt;
-import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
@@ -83,16 +82,23 @@ public class OmegaCenterIconButton extends AppCompatButton {
                     if (mTintColor != Color.TRANSPARENT) {
                         wrappedDrawable = getTintedDrawable(wrappedDrawable);
                     }
-                    if (mDrawableSize != -1) {
+                    if (mDrawableSize > 0) {
                         wrappedDrawable = updateDrawableBounds(wrappedDrawable);
                     }
                     wrappedDrawables[i] = wrappedDrawable;
                 }
             }
-            setCompoundDrawables(wrappedDrawables[DRAWABLE_LEFT_POSITION],
-                                 wrappedDrawables[DRAWABLE_TOP_POSITION],
-                                 wrappedDrawables[DRAWABLE_RIGHT_POSITION],
-                                 wrappedDrawables[DRAWABLE_BOTTOM_POSITION]);
+            if (mDrawableSize > 0) {
+                setCompoundDrawables(wrappedDrawables[DRAWABLE_LEFT_POSITION],
+                                     wrappedDrawables[DRAWABLE_TOP_POSITION],
+                                     wrappedDrawables[DRAWABLE_RIGHT_POSITION],
+                                     wrappedDrawables[DRAWABLE_BOTTOM_POSITION]);
+            } else {
+                setCompoundDrawablesWithIntrinsicBounds(wrappedDrawables[DRAWABLE_LEFT_POSITION],
+                                                        wrappedDrawables[DRAWABLE_TOP_POSITION],
+                                                        wrappedDrawables[DRAWABLE_RIGHT_POSITION],
+                                                        wrappedDrawables[DRAWABLE_BOTTOM_POSITION]);
+            }
         }
     }
 

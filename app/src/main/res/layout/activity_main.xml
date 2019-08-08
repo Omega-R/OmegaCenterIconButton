@@ -23,7 +23,7 @@
         android:drawableRight="@drawable/ic_android_black_24dp"
         android:text="Great"
         android:textSize="14sp"
-        app:drawableSize="40sp"
+        app:drawableSize="40dp"
         android:theme="@style/AccentButtonStyle" />
 
     <com.omega_r.libs.OmegaCenterIconButton
