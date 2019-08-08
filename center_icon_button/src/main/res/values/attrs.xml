@@ -3,6 +3,7 @@
 
     <declare-styleable name="OmegaCenterIconButton">
         <attr name="drawableTint" format="color"/>
+        <attr name="drawableSize" format="dimension"/>
         <attr name="android:drawablePadding"/>
     </declare-styleable>
 
