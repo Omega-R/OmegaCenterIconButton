@@ -35,6 +35,8 @@ public class OmegaCenterIconButton extends AppCompatButton {
     private int mTintColor = Color.TRANSPARENT;
     private int mLeftPadding;
     private int mRightPadding;
+    private int mTopPadding;
+    private int mBottomPadding;
     private int mDrawableSize;
 
     public OmegaCenterIconButton(Context context) {
@@ -67,6 +69,8 @@ public class OmegaCenterIconButton extends AppCompatButton {
         }
         mLeftPadding = getPaddingLeft();
         mRightPadding = getPaddingRight();
+        mTopPadding = getPaddingTop();
+        mBottomPadding = getPaddingBottom();
     }
 
     private void updateDrawables() {
@@ -90,14 +94,14 @@ public class OmegaCenterIconButton extends AppCompatButton {
             }
             if (mDrawableSize > 0) {
                 setCompoundDrawables(wrappedDrawables[DRAWABLE_LEFT_POSITION],
-                                     wrappedDrawables[DRAWABLE_TOP_POSITION],
-                                     wrappedDrawables[DRAWABLE_RIGHT_POSITION],
-                                     wrappedDrawables[DRAWABLE_BOTTOM_POSITION]);
+                        wrappedDrawables[DRAWABLE_TOP_POSITION],
+                        wrappedDrawables[DRAWABLE_RIGHT_POSITION],
+                        wrappedDrawables[DRAWABLE_BOTTOM_POSITION]);
             } else {
                 setCompoundDrawablesWithIntrinsicBounds(wrappedDrawables[DRAWABLE_LEFT_POSITION],
-                                                        wrappedDrawables[DRAWABLE_TOP_POSITION],
-                                                        wrappedDrawables[DRAWABLE_RIGHT_POSITION],
-                                                        wrappedDrawables[DRAWABLE_BOTTOM_POSITION]);
+                        wrappedDrawables[DRAWABLE_TOP_POSITION],
+                        wrappedDrawables[DRAWABLE_RIGHT_POSITION],
+                        wrappedDrawables[DRAWABLE_BOTTOM_POSITION]);
             }
         }
     }
@@ -136,11 +140,11 @@ public class OmegaCenterIconButton extends AppCompatButton {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        updatePadding(w);
+        updatePadding(w, h);
     }
 
     private void updatePadding() {
-        updatePadding(getMeasuredWidth());
+        updatePadding(getMeasuredWidth(), getMeasuredHeight());
     }
 
     @Override
@@ -148,35 +152,55 @@ public class OmegaCenterIconButton extends AppCompatButton {
         super.setPadding(left, top, right, bottom);
         mLeftPadding = left;
         mRightPadding = right;
+        mTopPadding = top;
+        mBottomPadding = bottom;
         updatePadding();
     }
 
-    private void updatePadding(int width) {
-        if (width == 0) return;
+    private void updatePadding(int width, int height) {
+        if (width == 0 || height == 0) return;
 
         Drawable[] compoundDrawables = getCompoundDrawables();
         if (compoundDrawables.length != DRAWABLES_LENGTH) return;
 
         Drawable leftDrawable = compoundDrawables[DRAWABLE_LEFT_POSITION];
+        Drawable topDrawable = compoundDrawables[DRAWABLE_TOP_POSITION];
         Drawable rightDrawable = compoundDrawables[DRAWABLE_RIGHT_POSITION];
-        if (leftDrawable == null && rightDrawable == null) return;
+        Drawable bottomDrawable = compoundDrawables[DRAWABLE_BOTTOM_POSITION];
+        if (leftDrawable == null && rightDrawable == null && topDrawable == null && bottomDrawable == null) return;
 
         int textWidth = getTextWidth();
+        int textHeight = getTextHeight();
         int iconPadding = Math.max(getCompoundDrawablePadding(), 1);
-        int paddingSize;
+        int widthPaddingSize;
+        int heightPaddingSize;
 
         int leftWidth = leftDrawable == null ? 0 : leftDrawable.getBounds().width();
+        int topHeight = topDrawable == null ? 0 : topDrawable.getBounds().height();
         int rightWidth = rightDrawable == null ? 0 : rightDrawable.getBounds().width();
+        int bottomHeight = bottomDrawable == null ? 0 : bottomDrawable.getBounds().height();
 
         if (leftDrawable != null && rightDrawable != null) {
-            paddingSize = (width - leftWidth - rightWidth - textWidth - iconPadding * 4) / 2;
+            widthPaddingSize = (width - leftWidth - rightWidth - textWidth - iconPadding * 4) / 2;
         } else if (leftDrawable != null) {
-            paddingSize = (width - leftWidth - iconPadding * 2 - textWidth) / 2;
+            widthPaddingSize = (width - leftWidth - iconPadding * 2 - textWidth) / 2;
         } else {
-            paddingSize = (width - rightWidth - iconPadding * 2 - textWidth) / 2;
+            widthPaddingSize = (width - rightWidth - iconPadding * 2 - textWidth) / 2;
         }
 
-        super.setPadding(Math.max(mLeftPadding, paddingSize), getPaddingTop(), Math.max(paddingSize, mRightPadding), getPaddingBottom());
+        if (topDrawable != null && bottomDrawable != null) {
+            heightPaddingSize = (height - topHeight - bottomHeight - textHeight - iconPadding * 4) / 2;
+        } else if (topDrawable != null) {
+            heightPaddingSize = (height - topHeight - iconPadding * 2 - textHeight) / 2;
+        } else {
+            heightPaddingSize = (height - bottomHeight - iconPadding * 2 - textHeight) / 2;
+        }
+
+        super.setPadding(
+                Math.max(mLeftPadding, widthPaddingSize),
+                Math.max(mTopPadding, heightPaddingSize),
+                Math.max(mRightPadding, widthPaddingSize),
+                Math.max(mBottomPadding, heightPaddingSize));
     }
 
     private int getTextWidth() {
@@ -187,6 +211,16 @@ public class OmegaCenterIconButton extends AppCompatButton {
         String text = divideText();
         paint.getTextBounds(text, 0, text.length(), textBoundsRect);
         return textBoundsRect.width();
+    }
+
+    private int getTextHeight() {
+        if (textBoundsRect == null) {
+            textBoundsRect = new Rect();
+        }
+        Paint paint = getPaint();
+        String text = divideText();
+        paint.getTextBounds(text, 0, text.length(), textBoundsRect);
+        return textBoundsRect.height();
     }
 
     private String divideText() {
