@@ -68,4 +68,30 @@
         android:text="both"
         android:textSize="14sp" />
 
+    <com.omega_r.libs.OmegaCenterIconButton
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_marginTop="20dp"
+        android:drawableTop="@drawable/ic_beach_access_black_24dp"
+        android:text="Top"
+        android:textSize="14sp" />
+
+    <com.omega_r.libs.OmegaCenterIconButton
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_marginTop="20dp"
+        android:drawableBottom="@drawable/ic_bug_report_black_24dp"
+        android:text="Bottom"
+        android:textSize="14sp" />
+
+    <com.omega_r.libs.OmegaCenterIconButton
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_marginTop="20dp"
+        android:drawableTop="@drawable/ic_beach_access_black_24dp"
+        android:drawableBottom="@drawable/ic_bug_report_black_24dp"
+
+        android:text="Both"
+        android:textSize="14sp" />
+
 </LinearLayout>
