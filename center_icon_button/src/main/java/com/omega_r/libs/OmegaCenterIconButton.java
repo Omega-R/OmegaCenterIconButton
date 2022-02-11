@@ -39,22 +39,22 @@ public class OmegaCenterIconButton extends AppCompatButton {
 
     public OmegaCenterIconButton(Context context) {
         super(context);
-        init(context, null);
+        init(context, null, 0);
     }
 
     public OmegaCenterIconButton(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context, attrs);
+        init(context, attrs, 0);
     }
 
     public OmegaCenterIconButton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context, attrs);
+        init(context, attrs, defStyleAttr);
     }
 
-    private void init(Context context, AttributeSet attrs) {
+    private void init(Context context, AttributeSet attrs, int defStyleAttr) {
         if (attrs != null) {
-            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.OmegaCenterIconButton);
+            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.OmegaCenterIconButton, defStyleAttr);
             mTintColor = typedArray.getColor(R.styleable.OmegaCenterIconButton_drawableTint, Color.TRANSPARENT);
             mDrawableSize = typedArray.getDimensionPixelSize(R.styleable.OmegaCenterIconButton_drawableSize, -1);
 
